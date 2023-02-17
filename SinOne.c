@@ -1,4 +1,3 @@
-#include <iostream>
 #include <math.h>
 #define PI 3.14159265
 #define lens 10000000
