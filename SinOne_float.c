@@ -7,30 +7,30 @@
 clock_t begin;
 clock_t end;
 float Pi = 3.14159265 * 2 / lens;
+float arrsin[lens];
 float sum = 0;
-float arrsin_f[lens];
 
-void create_sun(float* arrsin) {
+void create_sun() {
 #pragma acc kernels
     for (int i = 0; i < lens; i++)
         arrsin[i] = sin(i * Pi);;
 }
 
-float sum_sin(float* arrsin) {
+float sum_sin() {
 #pragma acc kernels
     for (int i = 0; i < lens; i++)
         sum += arrsin[i];
-    return sum;
 }
 
 int main()
 {
-#pragma acc data create(arrsin_f[:lens]) copy (sum,begin,end) copyin(Pi)
+#pragma acc data create(arrsin[:lens]) copy (sum,begin,end) copyin(Pi)
 
     begin = clock();
 
-    create_sun(arrsin_f);
-    printf("sum = %.25f\n", sum_sin(arrsin_f));
+    create_sun();
+    sum_sin();
+    printf("%.25f \n", sum);
 
     end = clock();
     printf("time: %.15lf\n", (double)(end - begin) / CLOCKS_PER_SEC);
