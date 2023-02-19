@@ -4,7 +4,6 @@
 
 #define lens 10000000
 
-
 float Pi = 3.14159265 * 2 / lens;
 float arrsin[lens];
 float sum = 0;
@@ -24,11 +23,8 @@ void sum_sin() {
 int main()
 {
 #pragma acc data create(arrsin[:lens]) copy (sum) copyin(Pi)
-
-
     create_sun();
     sum_sin();
-    printf("%.25f \n", sum);
-
+    printf("sum = %.25f \n", sum);
     return 0;
 }

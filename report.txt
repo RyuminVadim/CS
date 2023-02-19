@@ -8,19 +8,19 @@ SinOne_float.c программа с типом данных float
 
 Суммарное время выполнения циклов:
  GPU (us):
-  double: 46.6
-  float: 44.2
+  double: 6.533
+  float: 3.281
  CPU(ms):
   double: 63.3
   float: 63.3
 
-Суммарное время выполнения циклов 
+Общее время работы программ:
  GPU(us):
-  double: 46.6
-  float: 44.2
+  double: 41
+  float: 42
  CPU(ms):
-  double: 63.3
-  float: 63.3
+  double: 63.33
+  float: 50.27
 
 результат программы:
  GPU:
@@ -30,38 +30,41 @@ SinOne_float.c программа с типом данных float
   double: 0.0000006819764746870193085
   float: -0.2138943076133728027343750
 
-программа на графисеском ядре выполняется быстрее 
+программа на графисеском ядре выполняется быстрее.
 
 *Код программы - SinOne_double.c
 
 #include <stdio.h>
 #include <math.h>
+#include <time.h> 
 
 #define lens 10000000
 
-double Pi = 3.14159265 * 2 / lens;
-double arrsin_f[lens];
-double sum = 0;
+float Pi = 3.14159265 * 2 / lens;
+float arrsin[lens];
+float sum = 0;
 
-void create_sin(double* arrsin) {
+void create_sun() {
 #pragma acc kernels
     for (int i = 0; i < lens; i++)
         arrsin[i] = sin(i * Pi);;
 }
 
-double sum_sin(double* arrsin) {
+void sum_sin() {
 #pragma acc kernels
     for (int i = 0; i < lens; i++)
         sum += arrsin[i];
-    return sum;
 }
 
 int main()
 {
-#pragma acc data create(arrsin_f[:lens]) copy (sum) copyin(Pi)
-    create_sin(arrsin_f);
-    printf("%.25lf", sum_sin(arrsin_f));
+#pragma acc data create(arrsin[:lens]) copy (sum) copyin(Pi)
+    create_sun();
+    sum_sin();
+    printf("sum = %.25f \n", sum);
+    return 0;
 }
+
 
 
 -------------------------------------------------
@@ -74,28 +77,29 @@ int main()
 
 #define lens 10000000
 
-float Pi = 3.14159265 * 2 / lens;
-float sumsin = 0;
-float arrsin_f[lens];
+double Pi = 3.14159265 * 2 / lens;
+double arrsin[lens];
+double sum = 0;
 
-void create_sun(float* arrsin) {
-    #pragma acc kernels
+void create_sin() {
+#pragma acc kernels
     for (int i = 0; i < lens; i++)
         arrsin[i] = sin(i * Pi);;
 }
 
-float sum_sin(float* arrsin) {
-    #pragma acc kernels
+void sum_sin() {
+#pragma acc kernels
     for (int i = 0; i < lens; i++)
-        sumsin += arrsin[i];
-    return sumsin;
+        sum += arrsin[i];
 }
 
 int main()
 {
-#pragma acc data create(arrsin_f[:lens]) copy (sumsin) copyin(Pi)
-    create_sun(arrsin_f);
-    printf("%.25f", sum_sin(arrsin_f));
+#pragma acc data create(arrsin[:lens]) copy (sum) copyin(Pi)
+    create_sin();
+    sum_sin();
+    printf("sum = %.25lf\n", sum);
+    return 0;
 }
 
 

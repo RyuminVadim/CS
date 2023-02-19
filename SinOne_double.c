@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <math.h>
 
-
 #define lens 10000000
 
 double Pi = 3.14159265 * 2 / lens;
@@ -23,12 +22,8 @@ void sum_sin() {
 int main()
 {
 #pragma acc data create(arrsin[:lens]) copy (sum) copyin(Pi)
-
-
     create_sin();
     sum_sin();
     printf("sum = %.25lf\n", sum);
-
-
     return 0;
 }
