@@ -8,19 +8,95 @@ SinOne_float.c программа с типом данных float
 
 Суммарное время выполнения циклов:
  GPU (us):
-  double -46.6
-  float- 44.2
+  double: 46.6
+  float: 44.2
  CPU(ms):
-  double - 63.3
-  float - 63.3
+  double: 63.3
+  float: 63.3
 
 Суммарное время выполнения циклов 
  GPU(us):
-  double - 46.6
-  float - 44.2
+  double: 46.6
+  float: 44.2
  CPU(ms):
-  double - 63.3
-  float - 63.3
+  double: 63.3
+  float: 63.3
+
+результат программы:
+ GPU:
+  double: 0.0000000000000000000000000
+  float: 0.0000000000000000000000000
+ CPU:
+  double: 0.0000006819764746870193085
+  float: -0.2138943076133728027343750
+
+программа на графисеском ядре выполняется быстрее 
+
+*Код программы - SinOne_double.c
+
+#include <stdio.h>
+#include <math.h>
+
+#define lens 10000000
+
+double Pi = 3.14159265 * 2 / lens;
+double arrsin_f[lens];
+double sum = 0;
+
+void create_sin(double* arrsin) {
+#pragma acc kernels
+    for (int i = 0; i < lens; i++)
+        arrsin[i] = sin(i * Pi);;
+}
+
+double sum_sin(double* arrsin) {
+#pragma acc kernels
+    for (int i = 0; i < lens; i++)
+        sum += arrsin[i];
+    return sum;
+}
+
+int main()
+{
+#pragma acc data create(arrsin_f[:lens]) copy (sum) copyin(Pi)
+    create_sin(arrsin_f);
+    printf("%.25lf", sum_sin(arrsin_f));
+}
+
+
+-------------------------------------------------
+
+
+*Код программы - SinOne_double.c
+
+#include <stdio.h>
+#include <math.h>
+
+#define lens 10000000
+
+float Pi = 3.14159265 * 2 / lens;
+float sumsin = 0;
+float arrsin_f[lens];
+
+void create_sun(float* arrsin) {
+    #pragma acc kernels
+    for (int i = 0; i < lens; i++)
+        arrsin[i] = sin(i * Pi);;
+}
+
+float sum_sin(float* arrsin) {
+    #pragma acc kernels
+    for (int i = 0; i < lens; i++)
+        sumsin += arrsin[i];
+    return sumsin;
+}
+
+int main()
+{
+#pragma acc data create(arrsin_f[:lens]) copy (sumsin) copyin(Pi)
+    create_sun(arrsin_f);
+    printf("%.25f", sum_sin(arrsin_f));
+}
 
 
 
