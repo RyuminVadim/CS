@@ -2,8 +2,8 @@
 #include <math.h>
 
 #define lens 10000000
-#define Pi (3.14159265* 2 / lens)
 
+double Pi (3.14159265* 2 / lens)
 double arrsin_f[lens];
 double sum = 0;
 

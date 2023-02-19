@@ -2,8 +2,8 @@
 #include <math.h>
 
 #define lens 10000000
-#define Pi (3.14159265* 2 / lens)
 
+float Pi (3.14159265* 2 / lens)
 float sumsin = 0;
 float arrsin_f[lens];
 
