@@ -7,13 +7,13 @@ float Pi = 3.14159265 * 2 / lens;
 float sumsin = 0;
 float arrsin_f[lens];
 
-void sins_float(float* arrsin) {
+void create_sun(float* arrsin) {
     #pragma acc kernels
     for (int i = 0; i < lens; i++)
         arrsin[i] = sin(i * Pi);;
 }
 
-float sum_sins(float* arrsin) {
+float sum_sin(float* arrsin) {
     #pragma acc kernels
     for (int i = 0; i < lens; i++)
         sumsin += arrsin[i];
@@ -23,6 +23,6 @@ float sum_sins(float* arrsin) {
 int main()
 {
 #pragma acc data create(arrsin_f[:lens]) copy (sumsin) copyin(Pi)
-    sins_float(arrsin_f);
-    printf("%.25f", sum_sins(arrsin_f));
+    create_sun(arrsin_f);
+    printf("%.25f", sum_sin(arrsin_f));
 }
