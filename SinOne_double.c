@@ -1,10 +1,13 @@
 #include <stdio.h>
 #include <math.h>
+#include <time.h> 
 
 #define lens 10000000
 
+clock_t begin;
+clock_t end;
 double Pi = 3.14159265 * 2 / lens;
-double arrsin_f[lens];
+double arrsin[lens];
 double sum = 0;
 
 void create_sin(double* arrsin) {
@@ -22,7 +25,14 @@ double sum_sin(double* arrsin) {
 
 int main()
 {
-#pragma acc data create(arrsin_f[:lens]) copy (sum) copyin(Pi)
-    create_sin(arrsin_f);
-    printf("%.25lf", sum_sin(arrsin_f));
+#pragma acc data create(arrsin_f[:lens]) copy (sum,begin,end) copyin(Pi)
+
+    begin = clock();
+
+    create_sin(arrsin);
+    printf("sum = %.25lf\n", sum_sin(arrsin));
+
+    end = clock();
+    printf("time: %.15lf\n", (double)(end - begin) / CLOCKS_PER_SEC);
+    return 0;
 }
