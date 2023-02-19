@@ -8,13 +8,13 @@ float sumsin = 0;
 float arrsin_f[lens];
 
 void sins_float(float* arrsin) {
-#pragma acc kernels
+    #pragma acc kernels
     for (int i = 0; i < lens; i++)
         arrsin[i] = sin(i * Pi);;
 }
 
 float sum_sins(float* arrsin) {
-#pragma acc kernels
+    #pragma acc kernels
     for (int i = 0; i < lens; i++)
         sumsin += arrsin[i];
     return sumsin;
