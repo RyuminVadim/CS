@@ -1,0 +1,27 @@
+Программы:
+SinOne_double.c программа с типом данных double
+SinOne_float.c программа с типом данных float
+
+Компилятор:
+ pgcc для GPU
+ gcc для CPU
+
+Суммарное время выполнения циклов:
+ GPU (us):
+  double -46.6
+  float- 44.2
+ CPU(ms):
+  double - 63.3
+  float - 63.3
+
+Суммарное время выполнения циклов 
+ GPU(us):
+  double - 46.6
+  float - 44.2
+ CPU(ms):
+  double - 63.3
+  float - 63.3
+
+
+
+
