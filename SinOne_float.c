@@ -16,7 +16,7 @@ void create_sun() {
         arrsin[i] = sin(i * Pi);;
 }
 
-float sum_sin() {
+void sum_sin() {
 #pragma acc kernels
     for (int i = 0; i < lens; i++)
         sum += arrsin[i];
