@@ -3,7 +3,7 @@
 
 #define lens 10000000
 
-double Pi(3.14159265 * 2 / lens);
+double Pi = 3.14159265 * 2 / lens;
 double arrsin_f[lens];
 double sum = 0;
 
