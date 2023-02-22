@@ -1,3 +1,6 @@
+Gitgub: 
+https://github.com/RyuminVadim/CS
+
 Программы:
 SinOne_double.c программа с типом данных double
 SinOne_float.c программа с типом данных float
@@ -17,10 +20,10 @@ SinOne_float.c программа с типом данных float
 Общее время работы программ:
  GPU(us):
   double: 41
-  float: 42
+  float: 38
  CPU(ms):
   double: 63.33
-  float: 50.27
+  float: 63.3
 
 результат программы:
  GPU:
@@ -47,7 +50,7 @@ float sum = 0;
 void create_sun() {
 #pragma acc kernels
     for (int i = 0; i < lens; i++)
-        arrsin[i] = sin(i * Pi);;
+        arrsin[i] = sinf(i * Pi);;
 }
 
 void sum_sin() {
