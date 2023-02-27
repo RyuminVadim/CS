@@ -16,7 +16,7 @@ void completion_arr_t() {
 	A[0][sizearr - 1] = 20;
 	A[sizearr - 1][sizearr - 1] = 30;
 #pragma acc parallel
-	for (size_t i = 1; i < sizearr - 1; i++)
+	for (int i = 1; i < sizearr - 1; i++)
 	{
 		A[i][0] = A[0][0] + step * i;
 		A[0][i] = A[0][0] + step * i;
@@ -35,7 +35,7 @@ void completion_arr() {
 	A[sizearr - 1][sizearr - 1] = 30;
 	//распаралелить 
 #pragma acc parallel
-	for (size_t i = 1; i < sizearr - 1; i++)
+	for (int i = 1; i < sizearr - 1; i++)
 	{
 		A[i][0] = A[i - 1][0] + step;
 		A[0][i] = A[0][i - 1] + step;
@@ -48,13 +48,13 @@ void completion_arr() {
 void creating_array() {
 	// распаралелить
 //#pragma acc parallel
-	for (size_t i = 0; i < sizearr; i++)
+	for (int i = 0; i < sizearr; i++)
 	{
 		Anew[i] = (float*)malloc(sizearr * sizeof(float));
 		A[i] = (float*)malloc(sizearr * sizeof(float));
 		
 	}
-	for (size_t i = 0; i < sizearr; i++)
+	for (int i = 0; i < sizearr; i++)
 		A[i] = (float*)calloc(sizearr, sizeof(float));
 
 }
@@ -63,7 +63,7 @@ void creating_array() {
 void copy_arr() {
 	// распаралелить
 //#pragma acc parallel
-	for (size_t i = 0; i < sizearr; i++)
+	for (int i = 0; i < sizearr; i++)
 	{
 		memcpy(Anew[i], A[i], sizeof(float*) * sizearr / 2);
 	}
@@ -95,10 +95,10 @@ int main(int argc, char** argv)
 	while (iter < itermax && err>tol) {
 		err = 0;
 		// распаралелить
-		for (size_t i = 1; i < sizearr - 1; i++)
+		for (int i = 1; i < sizearr - 1; i++)
 		{
 			// распаралелить
-			for (size_t j = 1; j < sizearr - 1; j++)
+			for (int j = 1; j < sizearr - 1; j++)
 			{
 				A[i][j] = (Anew[i + 1][j] + Anew[i - 1][j] + Anew[i][j + 1] + Anew[i][j - 1]) / 4;
 				//val = ;
@@ -114,7 +114,7 @@ int main(int argc, char** argv)
 	printf("err =%f, iter = %zu\n", err, iter);
 	// распаралелить
 #pragma acc parallel
-	for (size_t i = 0; i < sizearr; i++)
+	for (int i = 0; i < sizearr; i++)
 	{
 		free(A[i]);
 	}
@@ -122,7 +122,7 @@ int main(int argc, char** argv)
 
 	// распаралелить
 #pragma acc parallel
-	for (size_t i = 0; i < sizearr; i++)
+	for (int i = 0; i < sizearr; i++)
 	{
 		free(Anew[i]);
 	}
