@@ -52,7 +52,7 @@ void creating_array() {
 	{
 		Anew[i] = (float*)malloc(sizearr * sizeof(float));
 		A[i] = (float*)malloc(sizearr * sizeof(float));
-		
+
 	}
 	for (int i = 0; i < sizearr; i++)
 		A[i] = (float*)calloc(sizearr, sizeof(float));
@@ -77,9 +77,13 @@ int main(int argc, char** argv)
 	//float sizearr = atof(argv[2]);
 	//float itermax = atof(argv[3]);
 
-	sizearr = atof(argv[2]);
-	size_t itermax = atof(argv[3]);
-	float tol = atof(argv[1]);
+	//sizearr = atof(argv[2]);
+	//size_t itermax = atof(argv[3]);
+	//float tol = atof(argv[1]);
+
+	sizearr = 128;
+	size_t itermax = 1000000;
+	float tol = 0.000006;
 	float err = 30;
 	size_t iter = 0;
 	//добавить работу с данными
@@ -91,10 +95,11 @@ int main(int argc, char** argv)
 	completion_arr();
 	copy_arr();
 	//print_arr(arriter);
-#pragma acc kernels
+//#pragma acc kernels
 	while (iter < itermax && err>tol) {
 		err = 0;
 		// распаралелить
+#pragma acc kernels
 		for (int i = 1; i < sizearr - 1; i++)
 		{
 			// распаралелить
