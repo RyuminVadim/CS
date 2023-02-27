@@ -110,7 +110,7 @@ int main(int argc, char** argv)
 				//val = ;
 
 				//err = max(err, fabs(A[i][j] - Anew[i][j]));
-				err = err < fabs(A[i][j] - Anew[i][j]) ? fabs(A[i][j] - Anew[i][j]) : err;
+				err = err > fabs(A[i][j] - Anew[i][j]) ? err : fabs(A[i][j] - Anew[i][j]);
 			}
 		}
 		copy_arr();
