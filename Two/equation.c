@@ -63,7 +63,7 @@ void copy_arr() {
 	}
 }
 
-void main(int argc, char** argv)
+int main(int argc, char** argv)
 {
 
 	//float iter = 0;
@@ -95,7 +95,7 @@ void main(int argc, char** argv)
 			for (size_t j = 1; j < sizearr - 1; j++)
 			{
 				A[i][j] = (Anew[i + 1][j] + Anew[i - 1][j] + Anew[i][j + 1] + Anew[i][j - 1]) / 4;
-				err = max(err, fabs(A[i][j] - Anew[i][j]));
+				err = max(err, abs(A[i][j] - Anew[i][j]));
 			}
 		}
 		copy_arr();
