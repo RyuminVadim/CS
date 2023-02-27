@@ -103,6 +103,7 @@ int main(int argc, char** argv)
 		for (int i = 1; i < sizearr - 1; i++)
 		{
 			// распаралелить
+#pragma acc kernels
 			for (int j = 1; j < sizearr - 1; j++)
 			{
 				A[i][j] = (Anew[i + 1][j] + Anew[i - 1][j] + Anew[i][j + 1] + Anew[i][j - 1]) / 4;
