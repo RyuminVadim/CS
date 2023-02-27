@@ -29,14 +29,16 @@ void completion_arr() {
 
 void creating_array() {
 	// распаралелить
-#pragma acc parallel loop seq
+	#pragma acc parallel loop independent
 	for (int i = 0; i < sizearr; i++)
 	{
 		Anew[i] = (float*)malloc(sizearr * sizeof(float));
 		A[i] = (float*)malloc(sizearr * sizeof(float));
-		A[i] = (float*)calloc(sizearr, sizeof(float));
+		
 
 	}
+	for (int i = 0; i < sizearr; i++)
+		A[i] = (float*)calloc(sizearr, sizeof(float));
 
 
 }
