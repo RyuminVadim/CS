@@ -52,8 +52,10 @@ void creating_array() {
 	{
 		Anew[i] = (float*)malloc(sizearr * sizeof(float));
 		A[i] = (float*)malloc(sizearr * sizeof(float));
-		A[i] = (float*)calloc(sizearr, sizeof(float));
+		
 	}
+	for (size_t i = 0; i < sizearr; i++)
+		A[i] = (float*)calloc(sizearr, sizeof(float));
 
 }
 
