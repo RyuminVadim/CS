@@ -1,9 +1,7 @@
 ﻿#include <stdio.h>
 #include <math.h>
-#include <time.h> 
-#include <conio.h>
 #include <stdlib.h>
-#include <string.h>
+
 
 rsize_t sizearr;
 float** A;
@@ -27,24 +25,24 @@ void completion_arr_t() {
 }
 
 void completion_arr() {
-	float step = 10/ ((float)sizearr-1);
-	//printf("%f\n", step);
+	float step = 10 / ((float)sizearr - 1);
+
 	A[0][0] = 10;
 	A[sizearr - 1][0] = 20;
 	A[0][sizearr - 1] = 20;
 	A[sizearr - 1][sizearr - 1] = 30;
 	//распаралелить 
-	for (size_t i = 1; i < sizearr-1; i++)
+	for (size_t i = 1; i < sizearr - 1; i++)
 	{
 		A[i][0] = A[i - 1][0] + step;
-		A[0][i] = A[0][i-1] + step;
-		A[sizearr-1][i] = A[sizearr-1][i-1] + step;
-		A[i][sizearr-1] = A[i-1][sizearr-1] + step;
+		A[0][i] = A[0][i - 1] + step;
+		A[sizearr - 1][i] = A[sizearr - 1][i - 1] + step;
+		A[i][sizearr - 1] = A[i - 1][sizearr - 1] + step;
 	}
 
 }
 
-void creating_array(){
+void creating_array() {
 	// распаралелить
 	for (size_t i = 0; i < sizearr; i++)
 	{
@@ -52,7 +50,7 @@ void creating_array(){
 		A[i] = (float*)malloc(sizearr * sizeof(float));
 		A[i] = (float*)calloc(sizearr, sizeof(float));
 	}
-	
+
 }
 
 
@@ -60,21 +58,9 @@ void copy_arr() {
 	// распаралелить
 	for (size_t i = 0; i < sizearr; i++)
 	{
-		memcpy(Anew[i], A[i], sizeof(float*)*sizearr/2);
+		memcpy(Anew[i], A[i], sizeof(float*) * sizearr / 2);
 	}
 }
-/*
-void print_arr(float** arr) {
-	for (size_t i = 0; i < sizearr; i++)
-	{
-		for (size_t j = 0; j < sizearr; j++)
-		{
-			printf("%.1f ", arr[i][j]);
-		}
-		printf("\n");
-	}
-}
-*/
 
 void main(int argc, char** argv)
 {
@@ -84,21 +70,21 @@ void main(int argc, char** argv)
 	//float sizearr = atof(argv[2]);
 	//float itermax = atof(argv[3]);
 
-	sizearr = 128;
-	size_t itermax = 1000000;
-	float tol = 0.000006;
+	sizearr = atof(argv[2]);
+	size_t itermax = atof(argv[3]);
+	float tol = atof(argv[1]);
 	float err = 30;
 	size_t iter = 0;
 	//добавить работу с данными
 
-	A = (float**) malloc(sizearr * sizeof(float*));
-	Anew =(float**) malloc(sizearr * sizeof(float*));
+	A = (float**)malloc(sizearr * sizeof(float*));
+	Anew = (float**)malloc(sizearr * sizeof(float*));
 
 	creating_array();
 	completion_arr();
 	copy_arr();
 	//print_arr(arriter);
-	
+
 	while (iter < itermax && err>tol) {
 		err = 0;
 		// распаралелить
@@ -114,8 +100,8 @@ void main(int argc, char** argv)
 		copy_arr();
 		iter++;
 	}
-	
-	printf("err =%f, iter = %zu", err,iter);
+
+	printf("err =%f, iter = %zu", err, iter);
 	// распаралелить
 	for (size_t i = 0; i < sizearr; i++)
 	{
@@ -127,6 +113,6 @@ void main(int argc, char** argv)
 	for (size_t i = 0; i < sizearr; i++)
 	{
 		free(Anew[i]);
- 	}
+	}
 	free(Anew);
 }
