@@ -25,7 +25,7 @@ void completion_arr_t() {
 
 }
 
-int completion_arr() {
+void completion_arr() {
 	float step = 10 / ((float)sizearr - 1);
 
 	A[0][0] = 10;
@@ -85,7 +85,7 @@ int main(int argc, char** argv)
 	completion_arr();
 	copy_arr();
 	//print_arr(arriter);
-
+	float val;
 	while (iter < itermax && err>tol) {
 		err = 0;
 		// распаралелить
@@ -95,7 +95,8 @@ int main(int argc, char** argv)
 			for (size_t j = 1; j < sizearr - 1; j++)
 			{
 				A[i][j] = (Anew[i + 1][j] + Anew[i - 1][j] + Anew[i][j + 1] + Anew[i][j - 1]) / 4;
-				err = max(err, abs(A[i][j] - Anew[i][j]));
+				val = abs(A[i][j] - Anew[i][j])
+				err = max(err, val);
 			}
 		}
 		copy_arr();
