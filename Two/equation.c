@@ -121,7 +121,7 @@ int main(int argc, char** argv)
 	free(A);
 
 	// распаралелить
-#pragma acc parallel
+	//#pragma acc parallel
 	for (int i = 0; i < sizearr; i++)
 	{
 		free(Anew[i]);
