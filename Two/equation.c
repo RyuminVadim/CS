@@ -95,8 +95,10 @@ int main(int argc, char** argv)
 			for (size_t j = 1; j < sizearr - 1; j++)
 			{
 				A[i][j] = (Anew[i + 1][j] + Anew[i - 1][j] + Anew[i][j + 1] + Anew[i][j - 1]) / 4;
-				val = abs(A[i][j] - Anew[i][j]);
-				err = max(err, val);
+				//val = abs(A[i][j] - Anew[i][j]);
+				
+				///err = max(err, val);
+				err = err > abs(A[i][j] - Anew[i][j]) ? abs(A[i][j] - Anew[i][j]) : err;
 			}
 		}
 		copy_arr();
