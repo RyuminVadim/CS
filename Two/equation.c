@@ -113,7 +113,7 @@ int main(int argc, char** argv)
 
 	printf("err =%f, iter = %zu\n", err, iter);
 	// распаралелить
-#pragma acc parallel
+	//#pragma acc parallel
 	for (int i = 0; i < sizearr; i++)
 	{
 		free(A[i]);
