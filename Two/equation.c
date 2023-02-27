@@ -62,7 +62,7 @@ void creating_array() {
 
 void copy_arr() {
 	// распаралелить
-#pragma acc parallel
+//#pragma acc parallel
 	for (size_t i = 0; i < sizearr; i++)
 	{
 		memcpy(Anew[i], A[i], sizeof(float*) * sizearr / 2);
