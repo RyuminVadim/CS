@@ -4,7 +4,7 @@
 #include <string.h>
 
 
-rsize_t sizearr;
+size_t sizearr =0;
 float** A;
 float** Anew;
 
@@ -25,7 +25,7 @@ void completion_arr_t() {
 
 }
 
-void completion_arr() {
+int completion_arr() {
 	float step = 10 / ((float)sizearr - 1);
 
 	A[0][0] = 10;
@@ -116,4 +116,5 @@ void main(int argc, char** argv)
 		free(Anew[i]);
 	}
 	free(Anew);
+	return 0;
 }
