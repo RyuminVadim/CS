@@ -4,7 +4,7 @@
 #include <string.h>
 
 
-size_t sizearr =0;
+size_t sizearr = 0;
 float** A;
 float** Anew;
 
@@ -85,7 +85,7 @@ int main(int argc, char** argv)
 	completion_arr();
 	copy_arr();
 	//print_arr(arriter);
-	float val;
+
 	while (iter < itermax && err>tol) {
 		err = 0;
 		// распаралелить
@@ -95,10 +95,10 @@ int main(int argc, char** argv)
 			for (size_t j = 1; j < sizearr - 1; j++)
 			{
 				A[i][j] = (Anew[i + 1][j] + Anew[i - 1][j] + Anew[i][j + 1] + Anew[i][j - 1]) / 4;
-				//val = abs(A[i][j] - Anew[i][j]);
-				
-				///err = max(err, val);
-				err = err > abs(A[i][j] - Anew[i][j]) ? abs(A[i][j] - Anew[i][j]) : err;
+				//val = ;
+
+				//err = max(err, fabs(A[i][j] - Anew[i][j]));
+				err = err < fabs(A[i][j] - Anew[i][j]) ? fabs(A[i][j] - Anew[i][j]) : err;
 			}
 		}
 		copy_arr();
