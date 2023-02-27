@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include <libcupti.so>
 
 
 size_t sizearr = 0;
