@@ -47,7 +47,7 @@ void completion_arr() {
 
 void creating_array() {
 	// распаралелить
-#pragma acc parallel
+//#pragma acc parallel
 	for (size_t i = 0; i < sizearr; i++)
 	{
 		Anew[i] = (float*)malloc(sizearr * sizeof(float));
