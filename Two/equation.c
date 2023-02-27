@@ -2,7 +2,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
-#include <libcupti.so>
 
 
 size_t sizearr = 0;
@@ -100,7 +99,7 @@ int main(int argc, char** argv)
 	while (iter < itermax && err>tol) {
 		err = 0;
 		// распаралелить
-#pragma acc kernels
+//#pragma acc kernels
 		for (int i = 1; i < sizearr - 1; i++)
 		{
 			// распаралелить
