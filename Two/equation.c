@@ -1,109 +1,115 @@
 ﻿#include <stdio.h>
 #include <math.h>
+#include <conio.h>
 #include <stdlib.h>
-#include <string.h>
+
+rsize_t sizearr;
+float* A;
+float* Anew;
+float step;
+float* split;
 
 
-size_t sizearr = 0;
-float** A;
-float** Anew;
+void printArr(float* arr) {
+	for (size_t i = 0; i < sizearr * sizearr; i++)
+	{
+		if (i % sizearr == 0)
+			printf("\n");
+		printf("%f ", arr[i]);
+	}
+}
 
-void completion_arr() {
-	float step = 10 / ((float)sizearr - 1);
+void splits() {
+	split = A;
+	A = Anew;
+	Anew = split;
+}
 
-	A[0][0] = 10;
-	A[sizearr - 1][0] = 20;
-	A[0][sizearr - 1] = 20;
-	A[sizearr - 1][sizearr - 1] = 30;
+void completionArr() {
+	step = 10 / ((float)sizearr - 1);
+#pragma acc data present(step,A,Anew)
+	{
+		A[0] = (float)10;
+		A[sizearr - 1] = (float)20;
+		A[sizearr * (sizearr - 1)] = (float)20;
+		A[sizearr * sizearr - 1] = 30;
+
+		Anew[0] = (float)10;
+		Anew[sizearr - 1] = (float)20;
+		Anew[sizearr * (sizearr - 1)] = (float)20;
+		Anew[sizearr * sizearr - 1] = 30;
 
 #pragma acc parallel loop independent
-	for (int i = 1; i < sizearr - 1; i++)
-	{
-		A[i][0] = A[i - 1][0] + step;
-		A[0][i] = A[0][i - 1] + step;
-		A[sizearr - 1][i] = A[sizearr - 1][i - 1] + step;
-		A[i][sizearr - 1] = A[i - 1][sizearr - 1] + step;
-	}
+		for (size_t i = 1; i < sizearr - 1; i++)
+		{
+			A[i] = A[0] + step * i;
+			Anew[i] = Anew[0] + step * i;
 
-}
+			A[i * sizearr] = A[0] + step * i;
+			Anew[i * sizearr] = Anew[0] + step * i;
 
-void creating_array() {
-	// распаралелить
-	#pragma acc parallel loop independent
-	for (int i = 0; i < sizearr; i++)
-	{
-		Anew[i] = (float*)malloc(sizearr * sizeof(float));
-		A[i] = (float*)malloc(sizearr * sizeof(float));
-		
+			A[i * sizearr + sizearr - 1] = A[sizearr - 1] + step * i;
+			Anew[i * sizearr + sizearr - 1] = Anew[sizearr - 1] + step * i;
 
-	}
-	for (int i = 0; i < sizearr; i++)
-		A[i] = (float*)calloc(sizearr, sizeof(float));
-
-
-}
-
-
-void copy_arr() {
-	// распаралелить
-#pragma acc parallel
-	for (int i = 0; i < sizearr; i++)
-	{
-		memcpy(Anew[i], A[i], sizeof(float*) * sizearr / 2);
+			A[(sizearr - 1) * sizearr + i] = A[sizearr - 1] + step * i;
+			Anew[(sizearr - 1) * sizearr + i] = Anew[sizearr - 1] + step * i;
+		}
 	}
 }
 
-int main(int argc, char** argv)
+void main(int argc, char** argv)
 {
-
 	//float tol = atof(argv[1]);
 	//sizearr = atof(argv[2]);
 	//size_t itermax = atof(argv[3]);
-
 
 	sizearr = 128;
 	size_t itermax = 1000000;
 	float tol = 0.000006;
 	float err = 30;
 	size_t iter = 0;
-	//добавить работу с данными
 
-	A = (float**)malloc(sizearr * sizeof(float*));
-	Anew = (float**)malloc(sizearr * sizeof(float*));
+	Anew = (float*)calloc(sizearr * sizearr, sizeof(float));
+	A = (float*)calloc(sizearr * sizearr, sizeof(float));
 
-	creating_array();
-	completion_arr();
-	copy_arr();
+#pragma acc enter data copy(err,iter) create(Anew[0:sizearr * sizearr], A[0:sizearr * sizearr,step,split) \
+	copyin(itermax,tol,sizearr)
+	{
+		completionArr();
+		splits();
 
-	while (iter < itermax && err>tol) {
-		err = 0;
-		for (int i = 1; i < sizearr - 1; i++)
-		{
-			for (int j = 1; j < sizearr - 1; j++)
+		while (iter < itermax && err>tol) {
+			err = 0;
+			iter++;
+#pragma acc data present(A, Anew)
 			{
-				A[i][j] = (Anew[i + 1][j] + Anew[i - 1][j] + Anew[i][j + 1] + Anew[i][j - 1]) / 4;
-				err = err > fabs(A[i][j] - Anew[i][j]) ? err : fabs(A[i][j] - Anew[i][j]);
+#pragma acc parallel reduction(max:err)
+				{
+#pragma acc loop independent
+					for (size_t i = sizearr; i < (sizearr) * (sizearr - 1); i++)
+					{
+						if (((i) % sizearr) == 0 || ((i) % sizearr) == 7)
+
+							continue;
+
+						Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] = 0.25 * (A[sizearr * ((i) / sizearr) + ((i + 1) % sizearr)] +
+							A[sizearr * ((i) / sizearr) + ((i - 1) % sizearr)] + A[sizearr * ((i / sizearr) - 1) + ((i) % sizearr)] +
+							A[sizearr * ((i / sizearr) + 1) + ((i) % sizearr)]);
+
+						err = max(Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] - A[sizearr * (i / (sizearr)) + ((i) % sizearr)], err);
+					}
+				}
 			}
+			splits();
+			//printf("iter = %zu \t err = %f \n", iter, err);
+
+
 		}
-		copy_arr();
-		iter++;
 	}
 
-	printf("err =%f, iter = %zu\n", err, iter);
-	// распаралелить
-	//#pragma acc parallel
-	for (int i = 0; i < sizearr; i++)
-	{
-		free(A[i]);
-	}
+	//printf("size_arr = %zu * %zu \t iter_max= %zu \t err = %f \n", sizearr, sizearr, itermax, tol);
+	printf("iter = %zu \t err = %f \n", iter, err);
+
 	free(A);
-
-	// распаралелить
-	//#pragma acc parallel
-	for (int i = 0; i < sizearr; i++)
-	{
-		free(Anew[i]);
-	}
 	free(Anew);
-	return 0;
 }
