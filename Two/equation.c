@@ -85,7 +85,7 @@ int main(int argc, char** argv)
 
 
 //#pragma acc parallel reduction(max:err)
-#pragma acc data present(Anew[0:sizearr * sizearr], A[0:sizearr * sizearr])
+#pragma acc data present(Anew, A)
 				 #pragma acc loop independent
 				for (int i = sizearr; i < (sizearr) * (sizearr - 1); i++)
 				{
