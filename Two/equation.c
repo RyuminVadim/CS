@@ -22,6 +22,7 @@ void splits() {
 	split = A;
 	A = Anew;
 	Anew = split;
+#pragma acc data present(A, Anew)
 }
 
 void completionArr() {
@@ -80,7 +81,7 @@ int main(int argc, char** argv)
 		while (iter < itermax && err>tol) {
 			err = 0;
 			iter++;
-#pragma acc data present(A, Anew)
+
 
 //#pragma acc parallel reduction(max:err)
 			 
