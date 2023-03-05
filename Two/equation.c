@@ -71,7 +71,7 @@ int main(int argc, char** argv)
 	Anew = (float*)calloc(sizearr * sizearr, sizeof(float));
 	A = (float*)calloc(sizearr * sizearr, sizeof(float));
 
-#pragma acc data copy(err,iter) create(Anew[0:sizearr * sizearr], A[0:sizearr * sizearr,step,split) \
+#pragma acc data copy(err,iter) create(Anew[0:sizearr * sizearr], A[0:sizearr * sizearr],step,split) \
 	copyin(itermax,tol,sizearr)
 	{
 		completionArr();
