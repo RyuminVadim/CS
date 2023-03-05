@@ -39,8 +39,8 @@ void completionArr() {
 		Anew[sizearr * (sizearr - 1)] = (float)20;
 		Anew[sizearr * sizearr - 1] = 30;
 
-#pragma acc parallel loop independent
-		for (int i = 1; i < sizearr - 1; i++)
+#pragma acc parallel loop 
+		for (int i = 1; i < sizearr ; i++)
 		{
 			A[i] = A[0] + step * i;
 			Anew[i] = Anew[0] + step * i;
@@ -72,11 +72,13 @@ int main(int argc, char** argv)
 	Anew = (float*)calloc(sizearr * sizearr, sizeof(float));
 	A = (float*)calloc(sizearr * sizearr, sizeof(float));
 
+	completionArr();
+	splits();
+
 #pragma acc data copy(err,iter) create(Anew[0:sizearr * sizearr], A[0:sizearr * sizearr],step,split) \
 	copyin(itermax,tol,sizearr)
 	{
-		completionArr();
-		splits();
+		
 
 		while (iter < itermax && err>tol) {
 			err = 0;
