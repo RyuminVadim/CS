@@ -2,7 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 
-rsize_t sizearr;
+int sizearr;
 float* A;
 float* Anew;
 float step;
@@ -10,7 +10,7 @@ float* split;
 
 
 void printArr(float* arr) {
-	for (size_t i = 0; i < sizearr * sizearr; i++)
+	for (int i = 0; i < sizearr * sizearr; i++)
 	{
 		if (i % sizearr == 0)
 			printf("\n");
@@ -39,7 +39,7 @@ void completionArr() {
 		Anew[sizearr * sizearr - 1] = 30;
 
 #pragma acc parallel loop independent
-		for (size_t i = 1; i < sizearr - 1; i++)
+		for (int i = 1; i < sizearr - 1; i++)
 		{
 			A[i] = A[0] + step * i;
 			Anew[i] = Anew[0] + step * i;
@@ -56,22 +56,22 @@ void completionArr() {
 	}
 }
 
-void main(int argc, char** argv)
+int main(int argc, char** argv)
 {
 	//float tol = atof(argv[1]);
 	//sizearr = atof(argv[2]);
 	//size_t itermax = atof(argv[3]);
 
 	sizearr = 128;
-	size_t itermax = 1000000;
+	int itermax = 1000000;
 	float tol = 0.000006;
 	float err = 30;
-	size_t iter = 0;
+	int iter = 0;
 
 	Anew = (float*)calloc(sizearr * sizearr, sizeof(float));
 	A = (float*)calloc(sizearr * sizearr, sizeof(float));
 
-#pragma acc enter data copy(err,iter) create(Anew[0:sizearr * sizearr], A[0:sizearr * sizearr,step,split) \
+#pragma acc data copy(err,iter) create(Anew[0:sizearr * sizearr], A[0:sizearr * sizearr,step,split) \
 	copyin(itermax,tol,sizearr)
 	{
 		completionArr();
@@ -85,7 +85,7 @@ void main(int argc, char** argv)
 #pragma acc parallel reduction(max:err)
 				{
 #pragma acc loop independent
-					for (size_t i = sizearr; i < (sizearr) * (sizearr - 1); i++)
+					for (int i = sizearr; i < (sizearr) * (sizearr - 1); i++)
 					{
 						if (((i) % sizearr) == 0 || ((i) % sizearr) == 7)
 
@@ -95,7 +95,7 @@ void main(int argc, char** argv)
 							A[sizearr * ((i) / sizearr) + ((i - 1) % sizearr)] + A[sizearr * ((i / sizearr) - 1) + ((i) % sizearr)] +
 							A[sizearr * ((i / sizearr) + 1) + ((i) % sizearr)]);
 
-						err = max(Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] - A[sizearr * (i / (sizearr)) + ((i) % sizearr)], err);
+						err = fmax(Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] - A[sizearr * (i / (sizearr)) + ((i) % sizearr)], err);
 					}
 				}
 			}
@@ -111,4 +111,5 @@ void main(int argc, char** argv)
 
 	free(A);
 	free(Anew);
+	return 0;
 }
