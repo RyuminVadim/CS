@@ -27,7 +27,7 @@ void splits() {
 
 void completionArr() {
 	step = 10 / ((float)sizearr - 1);
-#pragma acc data present(step,A,Anew)
+
 	{
 		A[0] = (float)10;
 		A[sizearr - 1] = (float)20;
@@ -39,7 +39,7 @@ void completionArr() {
 		Anew[sizearr * (sizearr - 1)] = (float)20;
 		Anew[sizearr * sizearr - 1] = 30;
 
-#pragma acc parallel loop 
+
 		for (int i = 1; i < sizearr ; i++)
 		{
 			A[i] = A[0] + step * i;
@@ -79,7 +79,6 @@ int main(int argc, char** argv)
 	copyin(itermax,tol,sizearr)
 	{
 		
-
 		while (iter < itermax && err>tol) {
 			err = 0;
 			iter++;
