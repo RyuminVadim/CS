@@ -82,9 +82,8 @@ int main(int argc, char** argv)
 			iter++;
 #pragma acc data present(A, Anew)
 			{
-#pragma acc parallel loop reduction(max:err) independent
+#pragma acc parallel loop reduction(max:err) 
 				{
-
 					for (int i = sizearr; i < (sizearr) * (sizearr - 1); i++)
 					{
 						if (((i) % sizearr) == 0 || ((i) % sizearr) == 7)
