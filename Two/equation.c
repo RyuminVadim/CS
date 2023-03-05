@@ -6,7 +6,7 @@ int sizearr;
 float* A;
 float* Anew;
 float step;
-float* split;
+
 
 
 void printArr(float* arr) {
@@ -19,7 +19,7 @@ void printArr(float* arr) {
 }
 
 void splits() {
-	split = A;
+	float* split = A;
 	A = Anew;
 	Anew = split;
 
@@ -40,7 +40,7 @@ void completionArr() {
 		Anew[sizearr * sizearr - 1] = 30;
 
 
-		for (int i = 1; i < sizearr ; i++)
+		for (int i = 1; i < sizearr; i++)
 		{
 			A[i] = A[0] + step * i;
 			Anew[i] = Anew[0] + step * i;
@@ -75,31 +75,31 @@ int main(int argc, char** argv)
 	completionArr();
 	splits();
 
-#pragma acc data copy(err,iter) create(Anew[0:sizearr * sizearr], A[0:sizearr * sizearr],step,split) \
+#pragma acc data copy(err,iter) create(Anew[:sizearr * sizearr], A[:sizearr * sizearr],step) \
 	copyin(itermax,tol,sizearr)
 	{
-		
+
 		while (iter < itermax && err>tol) {
 			err = 0;
 			iter++;
 
 
-//#pragma acc parallel reduction(max:err)
+			//#pragma acc parallel reduction(max:err)
 #pragma acc data present(Anew, A)
-				 #pragma acc loop independent
-				for (int i = sizearr; i < (sizearr) * (sizearr - 1); i++)
-				{
-					if (((i) % sizearr) == 0 || ((i) % sizearr) == 7)
+#pragma acc loop independent
+			for (int i = sizearr; i < (sizearr) * (sizearr - 1); i++)
+			{
+				if (((i) % sizearr) == 0 || ((i) % sizearr) == 7)
 
-						continue;
+					continue;
 
-					Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] = 0.25 * (A[sizearr * ((i) / sizearr) + ((i + 1) % sizearr)] +
-						A[sizearr * ((i) / sizearr) + ((i - 1) % sizearr)] + A[sizearr * ((i / sizearr) - 1) + ((i) % sizearr)] +
-						A[sizearr * ((i / sizearr) + 1) + ((i) % sizearr)]);
+				Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] = 0.25 * (A[sizearr * ((i) / sizearr) + ((i + 1) % sizearr)] +
+					A[sizearr * ((i) / sizearr) + ((i - 1) % sizearr)] + A[sizearr * ((i / sizearr) - 1) + ((i) % sizearr)] +
+					A[sizearr * ((i / sizearr) + 1) + ((i) % sizearr)]);
 
-					err = fmax(Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] - A[sizearr * (i / (sizearr)) + ((i) % sizearr)], err);
-				}
-			
+				err = fmax(Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] - A[sizearr * (i / (sizearr)) + ((i) % sizearr)], err);
+			}
+
 
 			splits();
 			//printf("iter = %zu \t err = %f \n", iter, err);
