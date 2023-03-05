@@ -84,7 +84,7 @@ int main(int argc, char** argv)
 
 #pragma acc parallel  reduction(max:err)
 			{
-#pragma acc  loop independent
+#pragma acc parallel loop independent
 				for (int i = sizearr; i < (sizearr) * (sizearr - 1); i++)
 				{
 					if (((i) % sizearr) == 0 || ((i) % sizearr) == 7)
