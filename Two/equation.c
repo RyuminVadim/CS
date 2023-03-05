@@ -86,18 +86,21 @@ int main(int argc, char** argv)
 
 			//#pragma acc parallel reduction(max:err)
 #pragma acc data present(Anew, A)
-#pragma acc loop independent
-			for (int i = sizearr; i < (sizearr) * (sizearr - 1); i++)
+#pragma acc parallel reduction(max:err)
 			{
-				if (((i) % sizearr) == 0 || ((i) % sizearr) == 7)
+#pragma acc loop independent
+				for (int i = sizearr; i < (sizearr) * (sizearr - 1); i++)
+				{
+					if (((i) % sizearr) == 0 || ((i) % sizearr) == 7)
 
-					continue;
+						continue;
 
-				Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] = 0.25 * (A[sizearr * ((i) / sizearr) + ((i + 1) % sizearr)] +
-					A[sizearr * ((i) / sizearr) + ((i - 1) % sizearr)] + A[sizearr * ((i / sizearr) - 1) + ((i) % sizearr)] +
-					A[sizearr * ((i / sizearr) + 1) + ((i) % sizearr)]);
+					Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] = 0.25 * (A[sizearr * ((i) / sizearr) + ((i + 1) % sizearr)] +
+						A[sizearr * ((i) / sizearr) + ((i - 1) % sizearr)] + A[sizearr * ((i / sizearr) - 1) + ((i) % sizearr)] +
+						A[sizearr * ((i / sizearr) + 1) + ((i) % sizearr)]);
 
-				err = fmax(Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] - A[sizearr * (i / (sizearr)) + ((i) % sizearr)], err);
+					err = fmax(Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] - A[sizearr * (i / (sizearr)) + ((i) % sizearr)], err);
+				}
 			}
 
 
