@@ -80,7 +80,7 @@ int main(int argc, char** argv)
 	//#pragma acc data copy(err,iter) create(Anew[:sizearr * sizearr], A[:sizearr * sizearr],step) copyin(itermax,tol,sizearr)
 #pragma acc data copyout(err) copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],sizearr)
 	{
-#pragma acc loop
+#pragma acc loop seq{
 		 do{
 			err = 0;
 			iter++;
@@ -106,6 +106,7 @@ int main(int argc, char** argv)
 #pragma acc data present(err)
 			printf("iter = %zu \t err = %f \n", iter, err);
 		 } while (iter < itermax && err>tol);
+		}
 	}
 	printf("iter = %zu \t err = %f \n", iter, err);
 
