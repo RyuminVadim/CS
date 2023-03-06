@@ -103,7 +103,7 @@ int main(int argc, char** argv)
 				}
 			}
 			splits();
-
+#pragma acc data present(err)
 			printf("iter = %zu \t err = %f \n", iter, err);
 		 } while (iter < itermax && err>tol);
 		
