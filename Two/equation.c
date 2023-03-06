@@ -103,6 +103,7 @@ int main(int argc, char** argv)
 				}
 			}
 			splits();
+#pragma acc update host (err)
 
 		}
 	}
