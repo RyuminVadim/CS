@@ -86,7 +86,6 @@ int main(int argc, char** argv)
 			iter++;
 
 
-#pragma acc data present(Anew, A,err)
 #pragma acc parallel reduction(max:err)
 			{
 #pragma acc loop independent
@@ -104,7 +103,7 @@ int main(int argc, char** argv)
 				}
 			}
 			splits();
-
+#pragma acc data present(Anew, A,err)
 
 		 } while (iter < itermax && err>tol);
 	}
