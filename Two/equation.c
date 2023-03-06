@@ -1,7 +1,7 @@
 ﻿#include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-#include <nvToolsExt.h>
+//#include <nvToolsExt.h>
 
 int sizearr;
 float* A;
@@ -69,7 +69,7 @@ int main(int argc, char** argv)
 
 	Anew = (float*)calloc(sizearr * sizearr, sizeof(float));
 	A = (float*)calloc(sizearr * sizearr, sizeof(float));
-	int id = nvtxRangeStartA("ii");
+	//int id = nvtxRangeStartA("ii");
 
 	completionArr();
 	splits();
@@ -100,7 +100,7 @@ int main(int argc, char** argv)
 		 } while (iter < itermax && err>tol);
 		
 	//}
-	nvtxRangeEnd(id);
+		 //nvtxRangeEnd(id);
 	printf("iter = %zu \t err = %f \n", iter, err);
 
 	free(A);
