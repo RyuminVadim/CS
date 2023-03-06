@@ -22,7 +22,7 @@ void splits() {
 	float* split = A;
 	A = Anew;
 	Anew = split;
-#pragma acc data present(Anew, A)
+
 }
 
 void completionArr() {
@@ -76,15 +76,14 @@ int main(int argc, char** argv)
 	splits();
 
 	//#pragma acc data copy(err,iter) create(Anew[:sizearr * sizearr], A[:sizearr * sizearr],step) copyin(itermax,tol,sizearr)
-#pragma acc data copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr])
+#pragma acc data copy(err,iter) copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr])
 
 	{
 
 		while (iter < itermax && err>tol) {
+#pragma acc data present(Anew, A,err,iter)
 			err = 0;
 			iter++;
-
-
 			//#pragma acc parallel reduction(max:err)
 
 #pragma acc parallel reduction(max:err)
