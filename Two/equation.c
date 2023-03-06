@@ -22,7 +22,7 @@ void splits() {
 	float* split = A;
 	A = Anew;
 	Anew = split;
-
+#pragma acc data present(Anew, A)
 }
 
 void completionArr() {
@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 
 
 			//#pragma acc parallel reduction(max:err)
-#pragma acc data present(Anew, A)
+
 #pragma acc parallel reduction(max:err)
 			{
 #pragma acc loop independent
