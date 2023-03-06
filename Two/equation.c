@@ -85,6 +85,7 @@ int main(int argc, char** argv)
 			err = 0;
 			iter++;
 
+#pragma acc update device (err)
 #pragma acc data present(Anew, A,err)
 #pragma acc parallel reduction(max:err)
 			{
