@@ -94,7 +94,7 @@ int main(int argc, char** argv)
 						A[sizearr * ((i / sizearr) + 1) + ((i) % sizearr)]);
 					err = fmax(Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] - A[sizearr * (i / (sizearr)) + ((i) % sizearr)], err);
 				}
-			}
+			
 			splits();
 		 } while (iter < itermax && err>tol);
 		
