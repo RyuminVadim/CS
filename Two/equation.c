@@ -68,7 +68,7 @@ int main(int argc, char** argv)
 	//sizearr = 128;
 	//int itermax = 1000000;
 	//float tol = 0.000006;
-	float err = 30;
+	float err;
 	int iter = 0;
 
 	Anew = (float*)calloc(sizearr * sizearr, sizeof(float));
@@ -78,14 +78,14 @@ int main(int argc, char** argv)
 	splits();
 
 	//#pragma acc data copy(err,iter) create(Anew[:sizearr * sizearr], A[:sizearr * sizearr],step) copyin(itermax,tol,sizearr)
-#pragma acc data create(err) copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],sizearr)
+#pragma acc data copyout(err) copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],sizearr)
 	{
-		while (iter < itermax && err>tol) {
+		 do{
 
 			err = 0;
 			iter++;
 
-#pragma acc update device (err)
+
 #pragma acc data present(Anew, A,err)
 #pragma acc parallel reduction(max:err)
 			{
@@ -104,9 +104,9 @@ int main(int argc, char** argv)
 				}
 			}
 			splits();
-#pragma acc update host (err)
 
-		}
+
+		} while (iter < itermax && err>tol)
 	}
 	printf("iter = %zu \t err = %f \n", iter, err);
 
