@@ -81,7 +81,6 @@ int main(int argc, char** argv)
 #pragma acc data copyout(err) copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],sizearr)
 	{
 		 do{
-#pragma acc data present(err)
 			err = 0;
 			iter++;
 
@@ -103,8 +102,8 @@ int main(int argc, char** argv)
 				}
 			}
 			splits();
-
 #pragma acc data present(err)
+
 		 } while (iter < itermax && err>tol);
 	}
 	printf("iter = %zu \t err = %f \n", iter, err);
