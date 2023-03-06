@@ -81,11 +81,11 @@ int main(int argc, char** argv)
 #pragma acc data create(err) copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],sizearr)
 	{
 		 do{
-
+#pragma acc data present(err)
 			err = 0;
 			iter++;
 
-#pragma acc data present(Anew, A,err)
+#pragma acc data present(Anew, A)
 #pragma acc parallel reduction(max:err)
 			{
 #pragma acc loop independent
