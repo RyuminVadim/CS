@@ -102,7 +102,7 @@ int main(int argc, char** argv)
 				}
 			}
 			splits();
-#pragma acc data present(err)
+
 #pragma acc	update host(err)
 			printf("iter = %zu \t err = %f \n", iter, err);
 		 } while (iter < itermax && err>tol);
