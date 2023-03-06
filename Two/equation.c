@@ -78,9 +78,12 @@ int main(int argc, char** argv)
 	splits();
 
 	//#pragma acc data copy(err,iter) create(Anew[:sizearr * sizearr], A[:sizearr * sizearr],step) copyin(itermax,tol,sizearr)
-#pragma acc data  copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],err) 
+#pragma acc data  copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr]) create (err)
 	{
+#pragma acc update device (err)
 		while (iter < itermax && err>tol) {
+
+
 			err = 0;
 			iter++;
 			//#pragma acc parallel reduction(max:err)
@@ -101,12 +104,16 @@ int main(int argc, char** argv)
 					err = fmax(Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] - A[sizearr * (i / (sizearr)) + ((i) % sizearr)], err);
 				}
 			}
-#pragma acc data present(err)
+#pragma acc update host (err)
+
 			splits();
+			//printf("iter = %zu \t err = %f \n", iter, err);
+
+
 		}
-#pragma acc update host(err)
 	}
 
+	//printf("size_arr = %zu * %zu \t iter_max= %zu \t err = %f \n", sizearr, sizearr, itermax, tol);
 	printf("iter = %zu \t err = %f \n", iter, err);
 
 	free(A);
