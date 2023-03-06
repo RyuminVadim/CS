@@ -100,7 +100,7 @@ int main(int argc, char** argv)
 				}
 			}
 			splits();
-			printf("iter = %zu \t err = %f \n", iter, err);
+
 		 } while (iter < itermax && err>tol);
 		
 	}
