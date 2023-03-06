@@ -85,7 +85,7 @@ int main(int argc, char** argv)
 			err = 0;
 			iter++;
 
-#pragma acc data present(Anew, A,err)
+#pragma acc data present(Anew, A)
 #pragma acc parallel reduction(max:err)
 			{
 #pragma acc loop independent
@@ -102,7 +102,7 @@ int main(int argc, char** argv)
 					err = fmax(Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] - A[sizearr * (i / (sizearr)) + ((i) % sizearr)], err);
 				}
 			}
-
+#pragma acc data present(Anew, A,err)
 			splits();
 
 		}
