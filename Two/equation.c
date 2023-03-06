@@ -59,13 +59,15 @@ void completionArr() {
 
 int main(int argc, char** argv)
 {
-	//float tol = atof(argv[1]);
-	//sizearr = atof(argv[2]);
-	//size_t itermax = atof(argv[3]);
+	int itermax;
+	float tol;
+	tol = atof(argv[1]);
+	sizearr = atof(argv[2]);
+	itermax = atof(argv[3]);
 
-	sizearr = 128;
-	int itermax = 1000000;
-	float tol = 0.000006;
+	//sizearr = 128;
+	//int itermax = 1000000;
+	//float tol = 0.000006;
 	float err = 30;
 	int iter = 0;
 
