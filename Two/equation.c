@@ -78,14 +78,14 @@ int main(int argc, char** argv)
 	splits();
 
 	//#pragma acc data copy(err,iter) create(Anew[:sizearr * sizearr], A[:sizearr * sizearr],step) copyin(itermax,tol,sizearr)
-#pragma acc data copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],err)
+#pragma acc data copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr])
 	{
 		while (iter < itermax && err>tol) {
 
 			err = 0;
 			iter++;
 
-#pragma acc data present(Anew, A,err)
+#pragma acc data present(Anew, A)
 #pragma acc parallel reduction(max:err)
 			{
 #pragma acc loop independent
@@ -102,8 +102,6 @@ int main(int argc, char** argv)
 					err = fmax(Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] - A[sizearr * (i / (sizearr)) + ((i) % sizearr)], err);
 				}
 			}
-#pragma acc update host(err)
-#pragma acc data present(err)
 			splits();
 
 		}
