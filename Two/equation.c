@@ -78,10 +78,10 @@ int main(int argc, char** argv)
 	splits();
 
 	//#pragma acc data copy(err,iter) create(Anew[:sizearr * sizearr], A[:sizearr * sizearr],step) copyin(itermax,tol,sizearr)
-#pragma acc data copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],sizearr)
+#pragma acc data copyout(err) copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],sizearr)
 	{
 		 do{
-
+#pragma acc data present(err)
 			err = 0;
 			iter++;
 
