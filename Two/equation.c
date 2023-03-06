@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 
 			err = 0;
 			iter++;
-
+			//#pragma acc parallel reduction(max:err)
 #pragma acc data present(Anew, A,err)
 #pragma acc parallel reduction(max:err)
 			{
@@ -104,8 +104,8 @@ int main(int argc, char** argv)
 					err = fmax(Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] - A[sizearr * (i / (sizearr)) + ((i) % sizearr)], err);
 				}
 			}
-#pragma acc update host (err)
 
+#pragma acc update host (err)
 			splits();
 			//printf("iter = %zu \t err = %f \n", iter, err);
 
