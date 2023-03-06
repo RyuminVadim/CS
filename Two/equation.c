@@ -37,25 +37,21 @@ void completionArr() {
 	Anew[sizearr - 1] = 20.0;
 	Anew[sizearr * (sizearr - 1)] = 20.0;
 	Anew[sizearr * sizearr - 1] = 30.0;
-#pragma acc data  copy(Anew[:sizearr * sizearr], A[:sizearr * sizearr]) copyin(sizearr,step)
+
+	for (int i = 1; i < sizearr; i++)
 	{
-#pragma acc parallel loop independent
-		for (int i = 1; i < sizearr; i++)
-		{
-			A[i] = A[0] + step * i;
-			Anew[i] = Anew[0] + step * i;
+		A[i] = A[0] + step * i;
+		Anew[i] = Anew[0] + step * i;
 
-			A[i * sizearr] = A[0] + step * i;
-			Anew[i * sizearr] = Anew[0] + step * i;
+		A[i * sizearr] = A[0] + step * i;
+		Anew[i * sizearr] = Anew[0] + step * i;
 
-			A[i * sizearr + sizearr - 1] = A[sizearr - 1] + step * i;
-			Anew[i * sizearr + sizearr - 1] = Anew[sizearr - 1] + step * i;
+		A[i * sizearr + sizearr - 1] = A[sizearr - 1] + step * i;
+		Anew[i * sizearr + sizearr - 1] = Anew[sizearr - 1] + step * i;
 
-			A[(sizearr - 1) * sizearr + i] = A[sizearr - 1] + step * i;
-			Anew[(sizearr - 1) * sizearr + i] = Anew[sizearr - 1] + step * i;
-		}
+		A[(sizearr - 1) * sizearr + i] = A[sizearr - 1] + step * i;
+		Anew[(sizearr - 1) * sizearr + i] = Anew[sizearr - 1] + step * i;
 	}
-	
 }
 
 int main(int argc, char** argv)
@@ -79,12 +75,12 @@ int main(int argc, char** argv)
 	splits();
 
 	//#pragma acc data copy(err,iter) create(Anew[:sizearr * sizearr], A[:sizearr * sizearr],step) copyin(itermax,tol,sizearr)
-#pragma acc data  copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],sizearr)
-	{
+//#pragma acc data  copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],sizearr)
+	//{
 		 do{
 			err = 0;
 			iter++;
-#pragma acc data present(Anew, A)
+//#pragma acc data present(Anew, A)
 #pragma acc parallel reduction(max:err)
 			{
 #pragma acc loop independent
@@ -103,7 +99,7 @@ int main(int argc, char** argv)
 			splits();
 		 } while (iter < itermax && err>tol);
 		
-	}
+	//}
 	printf("iter = %zu \t err = %f \n", iter, err);
 
 	free(A);
