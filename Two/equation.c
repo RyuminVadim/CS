@@ -79,7 +79,7 @@ int main(int argc, char** argv)
 #pragma acc data copy(err,iter) copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr])
 
 	{
-
+#pragma acc data present(err,iter)
 		while (iter < itermax && err>tol) {
 #pragma acc data present(Anew, A,err,iter)
 			err = 0;
