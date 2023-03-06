@@ -75,7 +75,9 @@ int main(int argc, char** argv)
 	completionArr();
 	splits();
 
-#pragma acc data copy(err,iter) create(Anew[:sizearr * sizearr], A[:sizearr * sizearr],step) copyin(itermax,tol,sizearr)
+	//#pragma acc data copy(err,iter) create(Anew[:sizearr * sizearr], A[:sizearr * sizearr],step) copyin(itermax,tol,sizearr)
+#pragma acc data copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr])
+
 	{
 
 		while (iter < itermax && err>tol) {
