@@ -78,12 +78,12 @@ int main(int argc, char** argv)
 	splits();
 
 	//#pragma acc data copy(err,iter) create(Anew[:sizearr * sizearr], A[:sizearr * sizearr],step) copyin(itermax,tol,sizearr)
-#pragma acc data create(err) copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],sizearr)
+#pragma acc data copy(err) copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],sizearr)
 	{
 		 do{
 			err = 0;
 			iter++;
-#pragma acc update device (err)
+
 #pragma acc data present(Anew, A)
 #pragma acc parallel reduction(max:err)
 			{
@@ -97,12 +97,10 @@ int main(int argc, char** argv)
 					Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] = 0.25 * (A[sizearr * ((i) / sizearr) + ((i + 1) % sizearr)] +
 						A[sizearr * ((i) / sizearr) + ((i - 1) % sizearr)] + A[sizearr * ((i / sizearr) - 1) + ((i) % sizearr)] +
 						A[sizearr * ((i / sizearr) + 1) + ((i) % sizearr)]);
-
 					err = fmax(Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] - A[sizearr * (i / (sizearr)) + ((i) % sizearr)], err);
 				}
 			}
 			splits();
-#pragma acc update host (err)
 
 			printf("iter = %zu \t err = %f \n", iter, err);
 		 } while (iter < itermax && err>tol);
