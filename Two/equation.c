@@ -28,35 +28,34 @@ void splits() {
 void completionArr() {
 	float step = 10 / ((float)sizearr - 1);
 
-	{
-		A[0] = (float)10;
-		A[sizearr - 1] = (float)20;
-		A[sizearr * (sizearr - 1)] = (float)20;
-		A[sizearr * sizearr - 1] = 30;
+	A[0] = 10.0;
+	A[sizearr - 1] = 20.0;
+	A[sizearr * (sizearr - 1)] = 20.0;
+	A[sizearr * sizearr - 1] = 30.0;
 
-		Anew[0] = (float)10;
-		Anew[sizearr - 1] = (float)20;
-		Anew[sizearr * (sizearr - 1)] = (float)20;
-		Anew[sizearr * sizearr - 1] = 30;
+	Anew[0] = 10.0;
+	Anew[sizearr - 1] = 20.0;
+	Anew[sizearr * (sizearr - 1)] = 20.0;
+	Anew[sizearr * sizearr - 1] = 30.0;
 #pragma acc data  copy(Anew[:sizearr * sizearr], A[:sizearr * sizearr]) copyin(sizearr,step)
-		{
+	{
 #pragma acc parallel loop independent
-			for (int i = 1; i < sizearr; i++)
-			{
-				A[i] = A[0] + step * i;
-				Anew[i] = Anew[0] + step * i;
+		for (int i = 1; i < sizearr; i++)
+		{
+			A[i] = A[0] + step * i;
+			Anew[i] = Anew[0] + step * i;
 
-				A[i * sizearr] = A[0] + step * i;
-				Anew[i * sizearr] = Anew[0] + step * i;
+			A[i * sizearr] = A[0] + step * i;
+			Anew[i * sizearr] = Anew[0] + step * i;
 
-				A[i * sizearr + sizearr - 1] = A[sizearr - 1] + step * i;
-				Anew[i * sizearr + sizearr - 1] = Anew[sizearr - 1] + step * i;
+			A[i * sizearr + sizearr - 1] = A[sizearr - 1] + step * i;
+			Anew[i * sizearr + sizearr - 1] = Anew[sizearr - 1] + step * i;
 
-				A[(sizearr - 1) * sizearr + i] = A[sizearr - 1] + step * i;
-				Anew[(sizearr - 1) * sizearr + i] = Anew[sizearr - 1] + step * i;
-			}
+			A[(sizearr - 1) * sizearr + i] = A[sizearr - 1] + step * i;
+			Anew[(sizearr - 1) * sizearr + i] = Anew[sizearr - 1] + step * i;
 		}
 	}
+	
 }
 
 int main(int argc, char** argv)
