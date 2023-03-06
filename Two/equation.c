@@ -78,9 +78,8 @@ int main(int argc, char** argv)
 	splits();
 
 	//#pragma acc data copy(err,iter) create(Anew[:sizearr * sizearr], A[:sizearr * sizearr],step) copyin(itermax,tol,sizearr)
-#pragma acc data  copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr]) create (err)
+#pragma acc data  copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],err) 
 	{
-#pragma acc update device(err)
 		while (iter < itermax && err>tol) {
 			err = 0;
 			iter++;
@@ -102,9 +101,10 @@ int main(int argc, char** argv)
 					err = fmax(Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] - A[sizearr * (i / (sizearr)) + ((i) % sizearr)], err);
 				}
 			}
-#pragma acc update host(err)
+
 			splits();
 		}
+#pragma acc update host(err)
 	}
 
 	printf("iter = %zu \t err = %f \n", iter, err);
