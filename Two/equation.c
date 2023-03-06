@@ -6,9 +6,6 @@ int sizearr;
 float* A;
 float* Anew;
 
-
-
-
 void printArr(float* arr) {
 	for (int i = 0; i < sizearr * sizearr; i++)
 	{
@@ -38,6 +35,7 @@ void completionArr() {
 	Anew[sizearr * (sizearr - 1)] = 20.0;
 	Anew[sizearr * sizearr - 1] = 30.0;
 
+#pragma acc parallel loop
 	for (int i = 1; i < sizearr; i++)
 	{
 		A[i] = A[0] + step * i;
@@ -52,7 +50,6 @@ void completionArr() {
 		A[(sizearr - 1) * sizearr + i] = A[sizearr - 1] + step * i;
 		Anew[(sizearr - 1) * sizearr + i] = Anew[sizearr - 1] + step * i;
 	}
-
 }
 
 int main(int argc, char** argv)
@@ -64,8 +61,8 @@ int main(int argc, char** argv)
 	itermax = atof(argv[3]);
 
 	//sizearr = 128;
-	//int itermax = 1000000;
-	//float tol = 0.000006;
+	//itermax = 1000000;
+	//tol = 0.000006;
 	float err;
 	int iter = 0;
 
@@ -76,12 +73,12 @@ int main(int argc, char** argv)
 	splits();
 
 	//#pragma acc data copy(err,iter) create(Anew[:sizearr * sizearr], A[:sizearr * sizearr],step) copyin(itermax,tol,sizearr)
-#pragma acc data  copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],sizearr)
+#pragma acc data copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],sizearr)
 	{
 		 do{
 			err = 0;
 			iter++;
-#pragma acc data present(Anew, A)
+#pragma acc data present(Anew, A,sizearr)
 #pragma acc parallel reduction(max:err)
 			{
 #pragma acc loop independent
