@@ -102,8 +102,8 @@ int main(int argc, char** argv)
 					err = fmax(Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] - A[sizearr * (i / (sizearr)) + ((i) % sizearr)], err);
 				}
 			}
-#pragma acc data present(err)
 #pragma acc update host(err)
+#pragma acc data present(err)
 			splits();
 
 		}
