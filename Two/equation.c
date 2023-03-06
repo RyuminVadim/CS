@@ -35,7 +35,7 @@ void completionArr() {
 	Anew[sizearr * (sizearr - 1)] = 20.0;
 	Anew[sizearr * sizearr - 1] = 30.0;
 
-//#pragma acc parallel loop
+#pragma acc parallel loop
 	for (int i = 1; i < sizearr; i++)
 	{
 		A[i] = A[0] + step * i;
