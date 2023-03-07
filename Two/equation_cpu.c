@@ -56,9 +56,6 @@ void completionArr() {
 
 int main(int argc, char** argv)
 {
-	double time_spent = 0.0;
-	clock_t begin = clock();
-
 	int itermax;
 	float tol;
 	tol = atof(argv[1]);
