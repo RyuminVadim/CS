@@ -95,7 +95,6 @@ int main(int argc, char** argv)
 		completionArr();
 		//splits();
 
-		#pragma acc kernels loop seq
 		do {
 			err = 0;
 			iter++;
