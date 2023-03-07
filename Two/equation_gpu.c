@@ -29,7 +29,7 @@ void completionArr() {
 	float step = 10 / ((float)sizearr - 1);
 #pragma acc data copyin(step)
 	{
-#pragma acc parallel loop independent
+#pragma acc loop independent
 		{
 			A[0] = 10.0;
 			A[sizearr - 1] = 20.0;
