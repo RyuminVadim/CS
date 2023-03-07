@@ -90,7 +90,7 @@ int main(int argc, char** argv)
 	}
 
 
-#pragma acc data copyin(Anew[:sizearr][: sizearr], A[:sizearr ][: sizearr],sizearr) 
+#pragma acc data copyin(Anew[:sizearr][: sizearr], A[:sizearr ][: sizearr],sizearr) create (err)
 	{
 		completionArr();
 		//splits();
@@ -98,7 +98,7 @@ int main(int argc, char** argv)
 		do {
 			err = 0;
 			iter++;
-//#pragma acc update device (err)
+#pragma acc update device (err)
 #pragma acc data present(Anew, A,sizearr)
 #pragma acc parallel reduction(max:err)
 			{
@@ -115,8 +115,8 @@ int main(int argc, char** argv)
 
 				}
 			}
-//#pragma acc data present(err)
-//#pragma acc update host (err)
+#pragma acc data present(err)
+#pragma acc update host (err)
 			splits();
 		} while (iter < itermax && err>tol);
 
