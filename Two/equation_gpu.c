@@ -82,7 +82,7 @@ int main(int argc, char** argv)
 	
 
 	//#pragma acc data copy(err,iter) create(Anew[:sizearr * sizearr], A[:sizearr * sizearr],step) copyin(itermax,tol,sizearr)
-#pragma acc data copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],sizearr,err)
+#pragma acc data copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],sizearr) create(err)
 	{
 		completionArr();
 		splits();
