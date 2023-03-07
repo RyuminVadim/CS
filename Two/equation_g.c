@@ -90,10 +90,11 @@ int main(int argc, char** argv)
 	}
 
 
-#pragma acc data copyin(Anew[:sizearr][: sizearr], A[:sizearr ][: sizearr],sizearr) create (err)
+#pragma acc data copyin(Anew[:sizearr][: sizearr], A[:sizearr ][: sizearr],sizearr) create(err)
 	{
 		completionArr();
 		//splits();
+
 
 		do {
 			err = 0;
