@@ -27,11 +27,7 @@ void splits() {
 }
 
 void completionArr() {
-	for (int i = 0; i < sizearr; i++)
-	{
-		Anew[i] = (float*)calloc(sizearr, sizeof(float));
-		A[i] = (float*)calloc(sizearr, sizeof(float));
-	}
+
 
 #pragma acc data present(Anew, A,sizearr)
 	float step = 10 / ((float)sizearr - 1);
@@ -87,6 +83,11 @@ int main(int argc, char** argv)
 	Anew = (float**)malloc(sizearr * sizeof(float*));
 	A = (float**)malloc(sizearr * sizeof(float*));
 
+	for (int i = 0; i < sizearr; i++)
+	{
+		Anew[i] = (float*)calloc(sizearr, sizeof(float));
+		A[i] = (float*)calloc(sizearr, sizeof(float));
+	}
 
 
 #pragma acc data copyin(Anew[:sizearr][: sizearr], A[:sizearr ][: sizearr],sizearr) create(err)
