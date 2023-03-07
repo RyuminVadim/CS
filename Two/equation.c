@@ -81,14 +81,13 @@ int main(int argc, char** argv)
 		 do{
 			err = 0;
 			iter++;
-#pragma acc data present(Anew, A,sizearr)
+#pragma acc data present(Anew, A)
 #pragma acc parallel reduction(max:err)
 			{
 #pragma acc loop independent
 				for (int i = sizearr; i < (sizearr) * (sizearr - 1); i++)
 				{
 					if (((i) % sizearr) == 0 || ((i) % sizearr) == 7)
-
 						continue;
 
 					Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] = 0.25 * (A[sizearr * ((i) / sizearr) + ((i + 1) % sizearr)] +
