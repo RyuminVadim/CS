@@ -1,7 +1,7 @@
 ﻿#include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
-#include <time.h> 
+
 //#include <nvToolsExt.h>
 
 int sizearr;
@@ -72,9 +72,6 @@ int main(int argc, char** argv)
 	A = (float*)calloc(sizearr * sizearr, sizeof(float));
 	//int id = nvtxRangeStartA("ii");
 
-	double time_spent = 0.0;
-	clock_t begin = clock();
-
 	completionArr();
 	splits();
 
@@ -105,11 +102,6 @@ int main(int argc, char** argv)
 		
 	//}
 		 //nvtxRangeEnd(id);
-
-		 clock_t end = clock();
-		 time_spent += (double)(end - begin) / CLOCKS_PER_SEC;
-
-		 printf("The elapsed time is %f seconds\n", time_spent);
 	printf("iter = %zu \t err = %f \n", iter, err);
 
 	free(A);
