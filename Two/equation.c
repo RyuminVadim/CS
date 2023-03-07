@@ -125,7 +125,7 @@ int main(int argc, char** argv)
 	//nvtxRangeEnd(id);
 	printf("iter = %zu \t err = %f \n", iter, err);
 
-	printArr(A);
+
 
 	for (int i = 0; i < sizearr; i++)
 	{
