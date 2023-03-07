@@ -76,7 +76,7 @@ int main(int argc, char** argv)
 	splits();
 
 	//#pragma acc data copy(err,iter) create(Anew[:sizearr * sizearr], A[:sizearr * sizearr],step) copyin(itermax,tol,sizearr)
-#pragma acc data copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr],sizearr)
+#pragma acc data copyin(Anew[:sizearr * sizearr], A[:sizearr * sizearr])
 	//{
 		 do{
 			err = 0;
@@ -89,13 +89,15 @@ int main(int argc, char** argv)
 				{
 					if (((i) % sizearr) == 0 || ((i) % sizearr) == 7)
 						continue;
-
-					Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] = 0.25 * (A[sizearr * ((i) / sizearr) + ((i + 1) % sizearr)] +
-						A[sizearr * ((i) / sizearr) + ((i - 1) % sizearr)] + A[sizearr * ((i / sizearr) - 1) + ((i) % sizearr)] +
-						A[sizearr * ((i / sizearr) + 1) + ((i) % sizearr)]);
-					err = fmax(Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] - A[sizearr * (i / (sizearr)) + ((i) % sizearr)], err);
+					else {
+						Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] = 0.25 * (A[sizearr * ((i) / sizearr) + ((i + 1) % sizearr)] +
+							A[sizearr * ((i) / sizearr) + ((i - 1) % sizearr)] + A[sizearr * ((i / sizearr) - 1) + ((i) % sizearr)] +
+							A[sizearr * ((i / sizearr) + 1) + ((i) % sizearr)]);
+						err = fmax(Anew[sizearr * (i / (sizearr)) + ((i) % sizearr)] - A[sizearr * (i / (sizearr)) + ((i) % sizearr)], err);
+					}
 				}
 			}
+
 			splits();
 		 } while (iter < itermax && err>tol);
 		
