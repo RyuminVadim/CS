@@ -2,8 +2,6 @@
 #include <math.h>
 #include <stdlib.h>
 
-//#include <nvToolsExt.h>
-
 int sizearr;
 float** A;
 float** Anew;
@@ -23,12 +21,9 @@ void splits() {
 	float** split = A;
 	A = Anew;
 	Anew = split;
-
 }
 
 void completionArr() {
-
-
 #pragma acc data present(Anew, A,sizearr)
 	float step = 10 / ((float)sizearr - 1);
 #pragma acc data copyin(step)
@@ -74,9 +69,7 @@ int main(int argc, char** argv)
 	tol = atof(argv[1]);
 	sizearr = atof(argv[2]);
 	itermax = atof(argv[3]);
-	//sizearr = 8;
-	//itermax = 1;
-	//tol = 0.000006;
+
 	float err;
 	int iter = 0;
 
@@ -93,8 +86,6 @@ int main(int argc, char** argv)
 #pragma acc data copyin(Anew[:sizearr][: sizearr], A[:sizearr ][: sizearr],sizearr) create(err)
 	{
 		completionArr();
-		//splits();
-
 		do {
 			err = 0;
 			iter++;
@@ -108,11 +99,9 @@ int main(int argc, char** argv)
 					#pragma acc loop independent
 					for (int j = 1; j < (sizearr - 1); j++)
 					{
-						//Anew[i][j] = i;
 						Anew[i][j] = 0.25 * (A[i - 1][j] + A[i + 1][j] + A[i][j - 1] + A[i][j + 1]);
 						err = fmax(Anew[i][j] - A[i][j], err);
 					}
-
 				}
 			}
 			#pragma acc data present(err)
@@ -121,10 +110,7 @@ int main(int argc, char** argv)
 		} while (iter < itermax && err>tol);
 
 	}
-	//nvtxRangeEnd(id);
 	printf("iter = %zu \t err = %f \n", iter, err);
-
-
 
 	for (int i = 0; i < sizearr; i++)
 	{
