@@ -63,13 +63,13 @@ int main(int argc, char** argv)
 
 	int itermax;
 	float tol;
-	//tol = atof(argv[1]);
-	//sizearr = atof(argv[2]);
-	//itermax = atof(argv[3]);
+	tol = atof(argv[1]);
+	sizearr = atof(argv[2]);
+	itermax = atof(argv[3]);
 
-	sizearr = 128;
-	itermax = 10000000;
-	tol = 0.000001;
+	//sizearr = 128;
+	//itermax = 10000000;
+	//tol = 0.000001;
 	float err;
 	int iter = 0;
 
