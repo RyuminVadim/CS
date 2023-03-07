@@ -104,7 +104,7 @@ int main(int argc, char** argv)
 		
 	//}
 		 //nvtxRangeEnd(id);
-	printf("iter = %zu \t err = %f \n", iter, err);
+	printf("iter = %zu \t err = %0.8f \n", iter, err);
 
 	free(A);
 	free(Anew);
