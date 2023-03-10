@@ -46,7 +46,7 @@ int main(void) {
         cublasDestroy(handle);
         return EXIT_FAILURE;
     }
-    modify(handle, devPtrA, M, N, 2, 3, 16.0f, 12.0f);
+    //modify(handle, devPtrA, M, N, 2, 3, 16.0f, 12.0f);
     stat = cublasGetMatrix(M, N, sizeof(*a), devPtrA, M, a, M);
     if (stat != CUBLAS_STATUS_SUCCESS) {
         printf("data upload failed");
