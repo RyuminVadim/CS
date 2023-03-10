@@ -9,7 +9,7 @@
 
 static __inline__ void modify(cublasHandle_t handle, float* m, int ldm, int n, int p, int q, float alpha, float beta) {
     cublasSscal(handle, n - q + 1, &alpha, &m[IDX2F(p, q, ldm)], ldm);
-    cublasSscal(handle, ldm - p + 1, &beta, &m[IDX2F(p, q, ldm)], 1);
+    //cublasSscal(handle, ldm - p + 1, &beta, &m[IDX2F(p, q, ldm)], 1);
 }
 
 int main(void) {
@@ -46,7 +46,7 @@ int main(void) {
         cublasDestroy(handle);
         return EXIT_FAILURE;
     }
-    //modify(handle, devPtrA, M, N, 2, 3, 16.0f, 12.0f);
+    modify(handle, devPtrA, M, N, 2, 3, 16.0f, 12.0f);
     stat = cublasGetMatrix(M, N, sizeof(*a), devPtrA, M, a, M);
     if (stat != CUBLAS_STATUS_SUCCESS) {
         printf("data upload failed");
