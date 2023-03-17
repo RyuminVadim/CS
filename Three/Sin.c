@@ -8,7 +8,8 @@
 #define IDX2F(i,j,ld) ((((j)-1)*(ld))+((i)-1))
 
 static __inline__ void modify(cublasHandle_t handle, float* m, int ldm, int n, int p, int q, float alpha, float beta) {
-    cublasSscal(handle, ldm * n , &alpha, &m[IDX2F(p, 2, 3)], ldm);
+    //cublasSscal(handle, n - q + 1, &alpha, &m[IDX2F(p, q, ldm)], ldm);
+    cublasSscal(handle, ldm * n, &alpha, m, 1);
     //cublasSscal(handle, n - q + 1, &alpha, &m[IDX2F(p, q, ldm)], ldm);
     //cublasSscal(handle, ldm - p + 1, &beta, &m[IDX2F(p, q, ldm)], 1);
 }
