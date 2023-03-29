@@ -1,4 +1,4 @@
-﻿#include <stdio.h>
+#include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 
@@ -10,6 +10,17 @@ void splits() {
 	float* split = A;
 	A = Anew;
 	Anew = split;
+}
+
+void printArr(float* arr) {
+	for (int i = 0; i < sizearr; i++)
+	{
+		for (int j = 0; j < sizearr; j++)
+		{
+			printf("%.2f\t", arr[i*sizearr + j]);
+		}
+		printf("\n");
+	}
 }
 
 
@@ -38,10 +49,12 @@ void completionArr() {
             Anew[(sizearr-1)*sizearr + i] = A[(sizearr-1)*sizearr + 0] +(step * i);
             Anew[i*sizearr + (sizearr-1)] = A[(sizearr-1)*sizearr + 0] +(step * i);
         }
+
 }
 
 int main(int argc, char** argv)
 {
+
 	int itermax;
 	float tol;
 
@@ -49,16 +62,28 @@ int main(int argc, char** argv)
 	sizearr = atof(argv[2]);
 	itermax = atof(argv[3]);
 
+    //tol = 0.000001;
+	//sizearr = 10;
+	//itermax = 100;
+
 	float err = 1;
 	int iter = 0;
+
 
 	Anew = (float*)calloc(sizearr *sizearr, sizeof(float));
 	A = (float*)calloc(sizearr *sizearr, sizeof(float));
 
     completionArr();
+    #pragma acc data copyin(Anew[:sizearr*sizearr],A[:sizearr*sizearr],sizearr) copy(err) 
     do{
 		iter++;
-        err = 0;
+         #pragma acc data present(sizearr)
+        if(iter %sizearr == 0)
+        {
+            err = 0;
+            #pragma acc update device(err)
+        }
+        #pragma acc data present(A,Anew,err)
         #pragma acc parallel reduction(max:err)
 		{
             #pragma acc loop independent
@@ -74,6 +99,10 @@ int main(int argc, char** argv)
             }
         }
         splits();
+        if(iter %sizearr == 0)
+        {
+            #pragma acc update host(err)
+        }
     }while(iter < itermax && err>tol);
 
     printf("iter = %d \t err = %f \n", iter, err);
