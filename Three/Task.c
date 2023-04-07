@@ -48,7 +48,7 @@ void completionArr() {
 int main(int argc, char** argv)
 {
     
-	
+	clock_t start = clock();
     int itermax;
 	double tol;
 
@@ -72,7 +72,7 @@ int main(int argc, char** argv)
 	cublasCreate(&handle);
 
     int result;
-    clock_t start = clock();
+    
 
     #pragma acc data copyin(Anew[:sizearr*sizearr],A[:sizearr*sizearr],Aerr[:sizearr*sizearr])
     {
@@ -111,15 +111,16 @@ int main(int argc, char** argv)
         }while(iter < itermax && err>tol);
     }
     printf("iter = %d \t err = %lf \n", iter, err);
-    clock_t end = clock();
-    double seconds = (double)(end - start) / CLOCKS_PER_SEC;
-    printf("The time: %f seconds\n", seconds);
+    
  
     free(Anew);
     free(A);
     free(Aerr);
     cublasDestroy(handle);
 
+    clock_t end = clock();
+    double seconds = (double)(end - start) / CLOCKS_PER_SEC;
+    printf("The time: %f seconds\n", seconds);
     
     return 0;
 }
