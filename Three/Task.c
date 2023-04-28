@@ -46,6 +46,8 @@ void completionArr() {
         }
 }
 
+// параметры указываются в ледующем прояжке:
+//  точность, размер сетки, количество итераций
 int main(int argc, char** argv)
 {
     
@@ -54,6 +56,15 @@ int main(int argc, char** argv)
 	double tol;
 
     //получаю значения из параметров командной строки.
+    
+    if (argc != 4 )
+    {
+        printf("Недостаточно параметров. Нужно ввести 3 параметра\n");
+        printf("1.точность;\n2. размер сетки;\n3. количество итераций\n");
+        return 0;
+        /* code */
+    }
+    
 	tol = atof(argv[1]);
 	sizearr = atof(argv[2]);
 	itermax = atof(argv[3]);
@@ -81,6 +92,8 @@ int main(int argc, char** argv)
 	cublasCreate(&handle);
 
     int result;
+    const double alpha = -1.0;
+    const double beta = 1.0;
     
     //копирую данные на GPU
     #pragma acc data copyin(Anew[:sizearr*sizearr],A[:sizearr*sizearr],Aerr[:sizearr*sizearr])
@@ -100,14 +113,21 @@ int main(int argc, char** argv)
                         Anew[IDX2C(i, j, sizearr)] = 0.25 * (A[IDX2C(i+1, j, sizearr)] +A[IDX2C(i-1, j, sizearr)]\
                         +A[IDX2C(i, j+1, sizearr)] + A[IDX2C(i, j-1, sizearr)]);
                         //рассчитываю модуль разницы значений новой и старой ячейки
-                        Aerr[IDX2C(i, j, sizearr)] =fabs(A[IDX2C(i, j, sizearr)] - Anew[IDX2C(i, j, sizearr)]);
                     }
             }
             }
-            if(iter %sizearr == 0)
+            if(iter %(sizearr*2) == 0)
             {
                 #pragma acc host_data use_device(A, Anew, Aerr)
 		        {
+                    
+                    stat = cublasDgeam(handle, CUBLAS_OP_N, CUBLAS_OP_N, sizearr, sizearr, &alpha, A, sizearr, &beta, Anew, sizearr, Aerr, sizearr);
+                    if (stat != CUBLAS_STATUS_SUCCESS){
+		    	        printf("cublasIdamax failed\n");
+		    	        cublasDestroy(handle);
+		    	        break;
+		            }
+                    
                     //получаю индекс ячейки с максимальным значением массива Aerr
 		            stat = cublasIdamax(handle, sizearr*sizearr, Aerr, 1, &result);
 		            if (stat != CUBLAS_STATUS_SUCCESS){
