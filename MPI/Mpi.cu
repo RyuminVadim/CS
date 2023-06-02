@@ -14,6 +14,24 @@
 #define THREADS_MAX 1024
 #define THREAD (size < THREADS_MAX ? size : THREADS_MAX)
 
+int find_area(int size, int gr_size, int DEVICE){
+    if (size % gr_size == 0) return size / gr_size;
+    
+    int tmp = size;
+    while (tmp % gr_size != 0){
+        tmp++;
+    }
+    int kek = size - ((gr_size - 1) * tmp / gr_size);
+    // std::cout << "DEVICE: "<< DEVICE << "kek: " << kek << std::endl;
+    if (kek == 1) {
+
+        if (DEVICE != gr_size - 1) return (tmp/gr_size) -1;
+        return gr_size;
+    } else if (DEVICE == gr_size - 1) return kek;
+
+    return tmp / gr_size;
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////// Функция изменения матрицы
 __global__ void iterate(double* A, double* A_new, size_t size_x, size_t size_y) {
@@ -62,10 +80,25 @@ int main(int argc, char** argv) {
 
 	size_t size_y; 
 	
-	size_y = size / COUNT_DEVICE;
-	if (COUNT_DEVICE > 1)
-		size_y++;
-	if (DEVICE != COUNT_DEVICE - 1 && DEVICE != 0) size_y += 1;
+	size_y = find_area(size,COUNT_DEVICE,DEVICE);
+	 size_t start_idx = size_y * DEVICE;
+    if (DEVICE == COUNT_DEVICE - 1) {
+        start_idx = (size - size_y) ;
+    }
+	//size_y = size / COUNT_DEVICE;
+	//if (COUNT_DEVICE > 1)
+	//	size_y++;
+	int prc_area_add = 0;
+    if (COUNT_DEVICE > 1)
+    {
+        if (DEVICE != 0 && DEVICE != COUNT_DEVICE -1){
+            prc_area_add = 2;
+        }
+        else{
+            prc_area_add++;
+        }
+    }
+    size_y = size_y + prc_area_add;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////// Выделения памяти
 	double *A, *A_Device, *A_new_Device, *A_error_Device, *deviceError, *tempStorage = NULL;
@@ -88,8 +121,8 @@ int main(int argc, char** argv) {
 	cudaMalloc(&deviceError, sizeof(double));
 
 	size_t offset = (DEVICE != 0) ? size : 0;
- 	cudaMemcpy(A_Device, A + (size * size * DEVICE / COUNT_DEVICE) - offset, sizeof(double) * size * size_y, cudaMemcpyHostToDevice);
-	cudaMemcpy(A_new_Device, A + (size * size * DEVICE / COUNT_DEVICE) - offset, sizeof(double) * size * size_y, cudaMemcpyHostToDevice);
+ 	cudaMemcpy(A_Device, A + (start_idx*size) - offset, sizeof(double) * size * size_y, cudaMemcpyHostToDevice);
+	cudaMemcpy(A_new_Device, A + (size * start_idx) - offset, sizeof(double) * size * size_y, cudaMemcpyHostToDevice);
 
 	cub::DeviceReduce::Max(tempStorage, tempStorageSize, A_error_Device, deviceError, size * size_y);
 	cudaMalloc(&tempStorage, tempStorageSize);
@@ -98,9 +131,9 @@ int main(int argc, char** argv) {
 	size_t iter = 0;
 	double error = 1.0;
 	clock_t begin = clock();
-	cudaStream_t stream, datatransfer;
+	cudaStream_t stream;
 	cudaStreamCreate(&stream);
-	cudaStreamCreate(&datatransfer);
+
 	while((iter < iter_max) && error > eps)	{
 		iterate<<<blocks, threads, 0, stream>>>(A_Device, A_new_Device, size, size_y);
 		iter++;
@@ -135,6 +168,54 @@ int main(int argc, char** argv) {
 	if (DEVICE == 0) {
 		std::cout << "Result:\n\tIter: " << iter << "\n\tError: " << error << "\n\tTime: " << 1.0 * (end - begin) / CLOCKS_PER_SEC << std::endl;
 	}
+/////////////////////////////////////
+
+cudaMemcpy(A, A_Device, sizeof(double) * size * size_y, cudaMemcpyDeviceToHost);
+    MPI_Barrier(MPI_COMM_WORLD);
+    if (DEVICE == 0)
+    {std::cout << "DEVICE: " << DEVICE << std::endl << std::endl;
+    {    for (int i = 0; i < size_y - prc_area_add; i ++) {
+            for (int j = 0; j < size; j ++) {
+                std::cout << A[i * size + j] << " ";
+            }
+            std::cout << std::endl;
+        }
+        // std::cout << std::endl;
+    }}
+
+    if (DEVICE == 1)
+    {std::cout << "DEVICE: " << DEVICE << std::endl << std::endl;
+    {    for (int i = 1; i < size_y - prc_area_add + 1; i ++) {
+            for (int j = 0; j < size; j ++) {
+                std::cout << A[i * size + j] << " ";
+            }
+            std::cout << std::endl;
+        }
+        // std::cout << std::endl;
+    }}
+    if (DEVICE == 2)
+    {std::cout << "DEVICE: " << DEVICE << std::endl << std::endl;
+    {    for (int i = 1; i < size_y - prc_area_add + 1; i ++) {
+            for (int j = 0; j < size; j ++) {
+                std::cout << A[i * size + j] << " ";
+            }
+            std::cout << std::endl;
+        }
+        // std::cout << std::endl;
+    }}
+    if (DEVICE == 3)
+    {std::cout << "DEVICE: " << DEVICE << std::endl << std::endl;
+    {    for (int i = 1; i < size_y; i ++) {
+            for (int j = 0; j < size; j ++) {
+                std::cout << A[i * size + j] << " ";
+            }
+            std::cout << std::endl;
+        }
+        std::cout << std::endl;
+    }}
+
+
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////// Чистка памяти
 	cudaFree(A_Device);
@@ -142,7 +223,6 @@ int main(int argc, char** argv) {
 	cudaFree(A_error_Device);
 	cudaFree(tempStorage);
 	cudaStreamDestroy(stream);
-	cudaStreamDestroy(datatransfer);
 	MPI_Finalize();
 
 	return 0;
